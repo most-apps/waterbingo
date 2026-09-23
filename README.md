@@ -23,7 +23,9 @@ npm run build      # typecheck + production build to dist/
 npm run deploy     # build + firebase deploy (needs `firebase login`)
 ```
 
-Hosted on Firebase Hosting (project `app-water-bingo`).
+Live at **https://apps.most.org/waterbingo/**. Every push to `main` deploys to GitHub Pages ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) after lint and tests pass. The repo name is the URL path.
+
+The older Firebase Hosting site (project `app-water-bingo`) still works via `npm run deploy` until it is retired.
 
 ## Changing the tiles
 

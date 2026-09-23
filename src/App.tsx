@@ -4,7 +4,8 @@ import CardsPage from "./pages/CardsPage";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // BASE_URL ends in "/", which would stop "/waterbingo" (no slash) from matching.
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
       <Routes>
         <Route path="/" element={<CallerPage />} />
         <Route path="/cards" element={<CardsPage />} />
