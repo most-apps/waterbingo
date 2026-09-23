@@ -1,0 +1,343 @@
+/* ---------- Start screen ---------- */
+
+.start {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(1200px 500px at 50% 110%, var(--wep-blue-soft), transparent 70%),
+    var(--bg);
+}
+.start-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem 1rem 3rem;
+  text-align: center;
+}
+.start-drop {
+  width: 72px;
+  height: 72px;
+  color: var(--wep-blue);
+}
+.start h1 {
+  font-size: clamp(3rem, 9vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--wep-blue);
+}
+.start-lede {
+  max-width: 34em;
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  color: var(--muted);
+}
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  text-align: left;
+}
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 1.1rem 1.1rem 1.1rem 3.6rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+.steps li strong {
+  display: block;
+  color: var(--ink);
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--wep-green);
+  color: #fff;
+  font-weight: 800;
+}
+
+.partner-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.5rem;
+  max-width: 900px;
+  margin-top: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+.partner-band img {
+  height: 64px;
+  width: auto;
+}
+.partner-band p {
+  flex: 1 1 320px;
+  margin: 0;
+  color: var(--muted);
+}
+.partner-band strong {
+  color: var(--wep-green);
+}
+
+/* ---------- Caller ---------- */
+
+/* The caller fills exactly one screen (projector) — nothing scrolls except the board. */
+.caller {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.caller-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  padding: clamp(1rem, 2vw, 2rem);
+  min-height: 0;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  background: var(--surface);
+  border-radius: calc(var(--radius) * 1.5);
+  box-shadow: var(--shadow);
+  min-height: 0;
+}
+.call-count {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.call-count strong {
+  color: var(--wep-blue);
+  font-size: 1.4em;
+}
+.stage-tile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  margin: 0;
+  min-height: 0;
+  animation: tile-in 0.35s ease-out;
+}
+.stage-image {
+  position: relative;
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 120px;
+}
+.stage-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.stage-label {
+  font-size: clamp(2rem, min(4.5vw, 7vh), 4.25rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.stage-controls .btn-xl {
+  min-width: 14em;
+}
+.stage-done {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--wep-green);
+}
+.hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+}
+.board h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+}
+.board-count {
+  padding: 0.1em 0.6em;
+  border-radius: 999px;
+  background: var(--wep-green);
+  color: #fff;
+  font-size: 0.9rem;
+}
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  align-content: start;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 8px 8px 8px 0;
+  list-style: none;
+  overflow-y: auto;
+}
+.board-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  background: var(--surface);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+.board-tile.is-called {
+  opacity: 1;
+  filter: none;
+  border-color: var(--wep-green);
+}
+.board-tile.is-current {
+  border-color: var(--wep-blue);
+  box-shadow: 0 0 0 3px var(--wep-blue-soft);
+}
+.board-tile img {
+  height: clamp(36px, 6vh, 64px);
+  width: 100%;
+  object-fit: contain;
+}
+.board-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+}
+.board-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--wep-green);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.board-tile.is-current .board-badge {
+  background: var(--wep-blue);
+}
+
+/* Phones/tablets: stack and let the page scroll. */
+@media (max-width: 900px) {
+  .caller {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  .caller-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .stage-image {
+    flex: none;
+    height: 40vh;
+  }
+}
+
+/* ---------- Card checker ---------- */
+
+.checker {
+  display: grid;
+  gap: 0.75rem;
+}
+.checker label {
+  font-weight: 600;
+}
+.checker-result {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+}
+.checker-result.is-win {
+  background: var(--wep-green-soft);
+  color: var(--wep-green);
+  font-size: 1.25rem;
+}
+.checker-result.is-miss {
+  background: var(--wep-blue-soft);
+  color: var(--wep-blue-dark);
+}
+.checker-result.is-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+}

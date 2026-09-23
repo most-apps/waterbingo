@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+# Water Bingo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A bingo caller screen and printable bingo cards that teach how Onondaga County cleans its wastewater — from what gets flushed, through pump stations, to the treatment plants. Built in partnership with **Onondaga County Department of Water Environment Protection (WEP)**.
 
-## Available Scripts
+## Running an event
 
-In the project directory, you can run:
+1. **Print cards:** open the app, choose **Print bingo cards**, pick a card range (e.g. 1–30) and **1, 2 or 4 cards per page**, then **Download PDF** (clean pages with no browser header, footer or URL, good for a print shop) or **Print**. Print at 100% / "Actual size". Card #N always has the same layout, so you can print 31–60 later with no duplicates.
+2. **Call:** choose **Start calling**. Press <kbd>Space</kbd>/<kbd>→</kbd> (or a presentation clicker) for the next tile, <kbd>←</kbd> to go back, <kbd>F</kbd> for full screen. The right-hand board shows everything called so far.
+3. **Check a winner:** choose **Check a card** and type their card number. The app marks the called squares and confirms any winning line (the centre is FREE).
 
-### `npm start`
+The game saves in the browser, so a refresh or accidental tab close keeps your place. **New game** clears it.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Development
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Needs Node 20+.
 
-### `npm test`
+```sh
+npm install
+npm run dev        # http://localhost:5173
+npm test           # Vitest, once
+npm run lint
+npm run build      # typecheck + production build to dist/
+npm run deploy     # build + firebase deploy (needs `firebase login`)
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Hosted on Firebase Hosting (project `app-water-bingo`).
 
-### `npm run build`
+## Changing the tiles
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Tiles live in [`src/data/tiles.ts`](src/data/tiles.ts) with images in `src/assets/tiles/`. **Changing the list changes every card layout**, so reprint all cards after adding, removing, or reordering tiles.

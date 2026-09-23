@@ -1,0 +1,284 @@
+.cards-page {
+  min-height: 100dvh;
+}
+
+/* ---------- Controls ---------- */
+
+.print-panel {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: var(--surface);
+  border-radius: calc(var(--radius) * 1.5);
+  box-shadow: var(--shadow);
+}
+.print-panel h1 {
+  font-size: 2rem;
+  color: var(--wep-blue);
+}
+.print-panel p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  max-width: 60em;
+}
+.print-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem 1.5rem;
+}
+.print-form .field {
+  width: 10rem;
+}
+.per-sheet {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.per-sheet legend {
+  padding: 0;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+.per-sheet-options {
+  display: flex;
+  gap: 0.5rem;
+}
+.per-sheet-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.3rem 0.9rem 0.3rem 0.6rem;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.per-sheet-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.per-sheet-option:has(input:checked) {
+  border-color: var(--wep-blue);
+  background: var(--wep-blue-soft);
+  color: var(--wep-blue);
+}
+.per-sheet-option:has(input:focus-visible) {
+  outline: 3px solid var(--wep-green);
+  outline-offset: 2px;
+}
+.print-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+.print-panel .print-summary {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+.print-panel .print-error {
+  margin: 0;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-weight: 700;
+}
+.print-panel .print-tip {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ---------- Sheets (letter pages) ----------
+ * Geometry mirrors src/lib/sheetLayout.ts: 0.4in page margin and gutter,
+ * cards 1.2× as tall as wide. `--in` is one inch at the current sheet scale,
+ * so the same rules work for the scaled screen preview and real paper.
+ */
+
+.sheets {
+  display: grid;
+  justify-items: center;
+  gap: 2rem;
+  padding: 0 1rem 3rem;
+}
+.sheet-frame {
+  container-type: inline-size;
+  width: min(100%, 8.5in);
+}
+.sheet-frame--landscape {
+  width: min(100%, 11in);
+}
+.sheet {
+  --in: calc(100cqw / 8.5);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  width: 100cqw;
+  height: calc(var(--in) * 11);
+  padding: calc(var(--in) * 0.4);
+  gap: calc(var(--in) * 0.4);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.sheet--2 {
+  --in: calc(100cqw / 11);
+  height: calc(var(--in) * 8.5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.sheet--4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+/* Dashed cut lines through the gutters. */
+.sheet--2::before,
+.sheet--4::before,
+.sheet--4::after {
+  content: "";
+  position: absolute;
+  border: 0 dashed #b8c4d4;
+}
+.sheet--2::before,
+.sheet--4::before {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left-width: 1px;
+}
+.sheet--4::after {
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top-width: 1px;
+}
+.sheet-slot {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ---------- Printed card, sized in --u = 1% of card width ---------- */
+
+.bingo-card--print {
+  --u: min(1cqw, calc(1cqh / 1.2));
+  display: flex;
+  flex-direction: column;
+  width: calc(var(--u) * 100);
+  height: calc(var(--u) * 120);
+}
+.bingo-card-head {
+  height: calc(var(--u) * 14);
+  text-align: center;
+}
+.bingo-card-head h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  font-size: calc(var(--u) * 8);
+  line-height: 1.15;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--wep-blue);
+}
+.bingo-card-drop {
+  width: 0.9em;
+  height: 0.9em;
+}
+.bingo-card-head p {
+  margin: calc(var(--u) * 0.6) 0 0;
+  font-size: calc(var(--u) * 2.1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--wep-green);
+}
+.bingo-card--print .bingo-grid {
+  flex: none;
+  border-width: calc(var(--u) * 0.7);
+  border-radius: calc(var(--u) * 1.2);
+}
+.bingo-card--print .bingo-cell {
+  padding: calc(var(--u) * 1.2);
+  gap: calc(var(--u) * 0.6);
+  border-color: #9fb3cc;
+  border-right-width: calc(var(--u) * 0.25);
+  border-bottom-width: calc(var(--u) * 0.25);
+}
+.bingo-card--print .bingo-cell-label {
+  font-size: calc(var(--u) * 2.3);
+}
+.bingo-card--print .bingo-cell--free .bingo-cell-label {
+  font-size: calc(var(--u) * 3.4);
+  font-weight: 800;
+}
+.bingo-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--u) * 2);
+  flex: 1;
+  font-size: calc(var(--u) * 2.1);
+  color: var(--muted);
+}
+.bingo-card-foot strong {
+  font-size: calc(var(--u) * 3);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* ---------- Paper ----------
+ * Zero page margins stop Chrome/Edge adding their own header, footer and URL;
+ * the 0.4in margin is inside .sheet instead.
+ */
+
+@page {
+  size: letter portrait;
+  margin: 0;
+}
+@page landscape-sheet {
+  size: letter landscape;
+  margin: 0;
+}
+
+@media print {
+  :root,
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .sheets {
+    display: block;
+    padding: 0;
+  }
+  .sheet-frame {
+    width: 8.5in;
+    break-after: page;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .sheet-frame--landscape {
+    width: 11in;
+    page: landscape-sheet;
+  }
+  .sheet-frame:last-child {
+    break-after: auto;
+  }
+  .sheet {
+    box-shadow: none;
+  }
+}

@@ -1,40 +1,374 @@
-html, body {
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
+/* WEP brand colours are sampled from the Onondaga County WEP logo. */
+:root {
+  --wep-blue: #0257b7;
+  --wep-blue-dark: #01418a;
+  --wep-blue-soft: #e3eefb;
+  --wep-green: #1e722d;
+  --wep-green-soft: #e1f2e4;
+  --ink: #0e1a2b;
+  --muted: #4d5b70;
+  --line: #d3deec;
+  --bg: #f1f6fc;
+  --surface: #ffffff;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --radius: 16px;
+  --shadow: 0 1px 2px rgb(14 26 43 / 0.06), 0 8px 24px rgb(14 26 43 / 0.08);
+  --font: "Avenir Next", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  color-scheme: light;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
 #root {
-  height: 100%;
-  width: 100%;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  margin: 0;
 }
 
-@media print {
-  body {
-    width: 8.5in;
-    height: 11in;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+img {
+  display: block;
+  max-width: 100%;
+}
+
+kbd {
+  font: inherit;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+:focus-visible {
+  outline: 3px solid var(--wep-green);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Buttons & inputs ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 44px;
+  padding: 0.55em 1.1em;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    transform 0.1s;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--wep-blue);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--wep-blue-dark);
+}
+.btn-secondary {
+  background: var(--surface);
+  color: var(--wep-blue);
+  border-color: var(--wep-blue);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--wep-blue-soft);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-ghost:hover {
+  background: var(--wep-blue-soft);
+}
+.btn-danger {
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: var(--danger-soft);
+}
+.btn-danger-solid {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-lg {
+  min-height: 56px;
+  font-size: 1.2rem;
+  padding-inline: 1.5em;
+}
+.btn-xl {
+  min-height: 72px;
+  font-size: 1.5rem;
+  padding-inline: 2em;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+.icon-btn:hover {
+  background: var(--wep-blue-soft);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.5em 0.8em;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1.1rem;
+  background: var(--surface);
+  color: var(--ink);
+}
+.input:focus {
+  border-color: var(--wep-blue);
+}
+.input-lg {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem clamp(1rem, 3vw, 2rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--wep-blue);
+  text-decoration: none;
+}
+.brand-drop {
+  width: 32px;
+  height: 32px;
+}
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.partner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--line);
+}
+.partner-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  max-width: 6.5em;
+  line-height: 1.2;
+}
+.partner img {
+  height: 44px;
+  width: auto;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .partner {
+    padding-left: 0;
+    border-left: 0;
   }
-  .MuiPaper-root {
-    page-break-after: always; /* Ensure each sheet is on a new page */
-    border: none;
-    box-shadow: none; /* Remove shadows for printing */
+  .toolbar {
+    margin-left: 0;
+  }
+}
+
+/* ---------- Dialog ---------- */
+
+.dialog {
+  width: min(560px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+}
+.dialog::backdrop {
+  background: rgb(14 26 43 / 0.55);
+}
+.dialog-body {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+.dialog-body p {
+  margin: 0;
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ---------- Bingo card (print + compact) ---------- */
+
+.bingo-card {
+  background: var(--surface);
+  color: var(--ink);
+}
+.bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 3px solid var(--wep-blue);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.bingo-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  aspect-ratio: 1;
+  padding: 6%;
+  border-right: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
+  text-align: center;
+  min-width: 0;
+}
+.bingo-cell:nth-child(5n) {
+  border-right: 0;
+}
+.bingo-cell:nth-last-child(-n + 5) {
+  border-bottom: 0;
+}
+.bingo-cell img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+}
+.bingo-cell-label {
+  font-weight: 700;
+  line-height: 1.1;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.bingo-cell--free {
+  background: var(--wep-blue-soft);
+  color: var(--wep-blue);
+}
+.free-drop {
+  flex: 1;
+  min-height: 0;
+  width: 60%;
+}
+
+.bingo-card--compact .bingo-cell {
+  padding: 5%;
+}
+.bingo-card--compact .bingo-cell-label {
+  display: none;
+}
+.bingo-card--compact .bingo-cell--free .bingo-cell-label {
+  display: block;
+  font-size: 0.7rem;
+}
+.bingo-card--compact .bingo-cell.is-marked:not(.bingo-cell--free)::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: rgb(30 114 45 / 0.35);
+  border: 3px solid var(--wep-green);
+}
+.bingo-card--compact .bingo-cell.is-winning {
+  background: var(--wep-green-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
