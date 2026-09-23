@@ -1,12 +1,12 @@
 # Water Bingo
 
-A bingo caller screen and printable bingo cards that teach how Onondaga County cleans its wastewater — from what gets flushed, through pump stations, to the treatment plants. Built in partnership with **Onondaga County Department of Water Environment Protection (WEP)**.
+A bingo caller screen and printable bingo cards that teach how Onondaga County cleans its wastewater — from what gets flushed, through pump stations, to the treatment plants. A program of the **Museum of Science & Technology (MOST)**, built in partnership with **Onondaga County Department of Water Environment Protection (WEP)**.
 
 ## Running an event
 
-1. **Print cards:** open the app, choose **Print bingo cards**, pick a card range (e.g. 1–30) and **1, 2 or 4 cards per page**, then **Download PDF** (clean pages with no browser header, footer or URL, good for a print shop) or **Print**. Print at 100% / "Actual size". Card #N always has the same layout, so you can print 31–60 later with no duplicates.
+1. **Print cards:** open the app, choose **Print bingo cards**, pick how many cards and **1, 2 or 4 cards per page**, then **Download PDF** (clean pages with no browser header, footer or URL, good for a print shop) or **Print**. Print at 100% / "Actual size". Each card gets a random word ID (e.g. `bubbly-misty-otter`) and the same ID always has the same layout, so leftover cards from earlier events still check correctly and new print runs won’t duplicate them.
 2. **Call:** choose **Start calling**. Press <kbd>Space</kbd>/<kbd>→</kbd> (or a presentation clicker) for the next tile, <kbd>←</kbd> to go back, <kbd>F</kbd> for full screen. The right-hand board shows everything called so far.
-3. **Check a winner:** choose **Check a card** and type their card number. The app marks the called squares and confirms any winning line (the centre is FREE).
+3. **Check a winner:** choose **Check a card** and type their card ID (the first few letters of each word are enough). The app marks the called squares and confirms any winning line (the centre is FREE).
 
 The game saves in the browser, so a refresh or accidental tab close keeps your place. **New game** clears it.
 

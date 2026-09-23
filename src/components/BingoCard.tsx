@@ -1,3 +1,4 @@
+import mostLogo from "../assets/brand/most-logo.png";
 import { FREE_INDEX, isMarked, type CardCell } from "../lib/cards";
 import { getTile } from "../data/tiles";
 import WaterDrop from "./WaterDrop";
@@ -19,7 +20,7 @@ export default function BingoCard({ cardId, cells, called, winning, variant = "p
           <h2>
             <WaterDrop className="bingo-card-drop" /> Water Bingo
           </h2>
-          <p>Onondaga County Department of Water Environment Protection</p>
+          <p>In partnership with Onondaga County Water Environment Protection</p>
         </header>
       )}
       <ol className="bingo-grid">
@@ -38,6 +39,7 @@ export default function BingoCard({ cardId, cells, called, winning, variant = "p
               <li key="free" className={classes}>
                 <WaterDrop className="free-drop" />
                 <span className="bingo-cell-label">FREE</span>
+                {variant === "print" && <span className="bingo-cell-caption">Five in a row wins!</span>}
               </li>
             );
           }
@@ -52,8 +54,10 @@ export default function BingoCard({ cardId, cells, called, winning, variant = "p
       </ol>
       {variant === "print" && (
         <footer className="bingo-card-foot">
-          <span>Mark each picture when it’s called. Five in a row wins!</span>
-          <strong>Card {cardId}</strong>
+          <strong>
+            Card ID: <span className="card-id">{cardId}</span>
+          </strong>
+          <img className="bingo-card-most" src={mostLogo} alt="Museum of Science & Technology (MOST)" />
         </footer>
       )}
     </article>

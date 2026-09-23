@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFImage, type PDFPage } from "pdf-lib";
+import mostLogo from "../assets/brand/most-logo.png";
 import { FREE_INDEX, GRID, type CardCell } from "./cards";
 import { cardRect, paginate, sheetSpec, slotRects, wrapText, type PerSheet, type Rect } from "./sheetLayout";
 
@@ -32,29 +33,29 @@ const hex = (h: string) =>
 const BLUE = hex("#0257b7");
 const BLUE_SOFT = hex("#e3eefb");
 const GREEN = hex("#1e722d");
+const PINK = hex("#df068c");
 const INK = hex("#0e1a2b");
-const MUTED = hex("#4d5b70");
 const CELL_LINE = hex("#9fb3cc");
 const CUT_LINE = hex("#b8c4d4");
 
 const DROP_PATH = "M32 4C32 4 12 28 12 42a20 20 0 0 0 40 0C52 28 32 4 32 4z";
-const SUBTITLE = "ONONDAGA COUNTY DEPARTMENT OF WATER ENVIRONMENT PROTECTION";
-export const FOOTER = "Mark each picture when it's called. Five in a row wins!";
-/** Footer font sizes in `u`; the instructions and the card ID share one line. */
-export const FOOTER_SIZE = { text: 2.1, id: 3 };
+const SUBTITLE = "IN PARTNERSHIP WITH ONONDAGA COUNTY WATER ENVIRONMENT PROTECTION";
+/** Footer, in `u`: card ID left, MOST logo right. */
+export const FOOTER = { idLabel: "Card ID: ", idSize: 3, logoHeight: 3.6, gap: 1.5 };
+/** Caption under FREE in the centre square, in bold at `size` u. */
+export const FREE_CAPTION = { text: "Five in a row wins!", size: 1.7 };
+export const MOST_LOGO_ASPECT = 2081 / 672; // most-logo.png
 
 const defaultLoad = async (url: string) => (await fetch(url)).arrayBuffer();
 
 export async function buildCardsPdf({ cards, perSheet, getTile, loadImage = defaultLoad }: BuildOptions) {
   const doc = await PDFDocument.create();
   doc.setTitle(`Water Bingo cards (${cards.length})`);
+  doc.setAuthor("Museum of Science & Technology (MOST)");
   doc.setSubject("In partnership with Onondaga County Department of Water Environment Protection");
   doc.setCreator("Water Bingo");
 
-  const fonts = {
-    regular: await doc.embedFont(StandardFonts.Helvetica),
-    bold: await doc.embedFont(StandardFonts.HelveticaBold),
-  };
+  const bold = await doc.embedFont(StandardFonts.HelveticaBold);
 
   // Embed each tile image once; every card reuses it.
   const ids = new Set(cards.flatMap((c) => c.cells.filter((x): x is string => x !== null)));
@@ -66,20 +67,23 @@ export async function buildCardsPdf({ cards, perSheet, getTile, loadImage = defa
     }),
   );
 
+  const logo = await doc.embedPng(await loadImage(mostLogo));
+
   const spec = sheetSpec(perSheet);
   const slots = slotRects(perSheet);
   for (const pageCards of paginate(cards, perSheet)) {
     const page = doc.addPage([spec.width, spec.height]);
     drawCutLines(page, perSheet);
-    pageCards.forEach((card, i) => drawCard(page, cardRect(slots[i]!), card, { fonts, images, getTile }));
+    pageCards.forEach((card, i) => drawCard(page, cardRect(slots[i]!), card, { bold, images, logo, getTile }));
   }
 
   return doc.save();
 }
 
 interface DrawContext {
-  fonts: { regular: PDFFont; bold: PDFFont };
+  bold: PDFFont;
   images: Map<string, PDFImage>;
+  logo: PDFImage;
   getTile: (id: string) => PdfTile;
 }
 
@@ -96,7 +100,7 @@ function drawCard(page: PDFPage, box: Rect, card: PdfCard, ctx: DrawContext) {
   const u = box.w / 100;
   const X = (x: number) => box.x + x * u;
   const Y = (y: number) => pageH - (box.y + y * u); // top-down → PDF bottom-up
-  const { regular, bold } = ctx.fonts;
+  const { bold } = ctx;
 
   // Header: drop + title, centred as one group.
   const title = "WATER BINGO";
@@ -128,11 +132,15 @@ function drawCard(page: PDFPage, box: Rect, card: PdfCard, ctx: DrawContext) {
   }
   page.drawRectangle({ x: X(0), y: Y(top + 100), width: 100 * u, height: 100 * u, borderColor: BLUE, borderWidth: 0.7 * u });
 
-  // Footer.
-  page.drawText(FOOTER, { x: X(0), y: Y(118.4), size: FOOTER_SIZE.text * u, font: regular, color: MUTED });
-  const num = `Card ${card.id}`;
-  const numSize = FOOTER_SIZE.id * u;
-  page.drawText(num, { x: X(100) - bold.widthOfTextAtSize(num, numSize), y: Y(118.6), size: numSize, font: bold, color: INK });
+  // Footer, centred on y = 117.5u: "Card ID: <id>" left (ID in pink), MOST logo right.
+  const idSize = FOOTER.idSize;
+  const labelW = bold.widthOfTextAtSize(FOOTER.idLabel, idSize);
+  page.drawText(FOOTER.idLabel, { x: X(0), y: Y(118.6), size: idSize * u, font: bold, color: INK });
+  page.drawText(card.id, { x: X(labelW), y: Y(118.6), size: idSize * u, font: bold, color: PINK });
+
+  const logoH = FOOTER.logoHeight;
+  const logoW = logoH * MOST_LOGO_ASPECT;
+  page.drawImage(ctx.logo, { x: X(100 - logoW), y: Y(117.5 + logoH / 2), width: logoW * u, height: logoH * u });
 }
 
 type Coord = (v: number) => number;
@@ -180,9 +188,12 @@ function drawTile(
 
 function drawFree(page: PDFPage, X: Coord, Y: Coord, u: number, cx: number, cy: number, cell: number, font: PDFFont) {
   page.drawRectangle({ x: X(cx), y: Y(cy + cell), width: cell * u, height: cell * u, color: BLUE_SOFT });
-  const drop = 9 * u;
-  page.drawSvgPath(DROP_PATH, { x: X(cx + cell / 2) - drop / 2, y: Y(cy + 3), scale: drop / 64, color: BLUE });
+  const drop = 7.5 * u;
+  page.drawSvgPath(DROP_PATH, { x: X(cx + cell / 2) - drop / 2, y: Y(cy + 1.8), scale: drop / 64, color: BLUE });
   const size = 3.4 * u;
   const w = font.widthOfTextAtSize("FREE", size);
-  page.drawText("FREE", { x: X(cx + cell / 2) - w / 2, y: Y(cy + cell - 2.4), size, font, color: BLUE });
+  page.drawText("FREE", { x: X(cx + cell / 2) - w / 2, y: Y(cy + 13.4), size, font, color: BLUE });
+  const capSize = FREE_CAPTION.size * u;
+  const capW = font.widthOfTextAtSize(FREE_CAPTION.text, capSize);
+  page.drawText(FREE_CAPTION.text, { x: X(cx + cell / 2) - capW / 2, y: Y(cy + 17.4), size: capSize, font, color: BLUE });
 }

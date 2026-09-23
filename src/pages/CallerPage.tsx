@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
+import mostLogo from "../assets/brand/most-logo.png";
 import wepLogo from "../assets/brand/wep-logo.png";
 import CardChecker from "../components/CardChecker";
 import Dialog from "../components/Dialog";
@@ -203,22 +204,20 @@ function StartScreen({ onStart }: { onStart: () => void }) {
         </div>
         <ol className="steps">
           <li>
-            <strong>Print cards.</strong> Each card has a number and its own mix of {CELLS - 1} pictures.
+            <strong>Print cards.</strong> Each card has its own word ID and mix of {CELLS - 1} pictures.
           </li>
           <li>
             <strong>Call tiles.</strong> Press <kbd>Space</kbd> to show the next picture and read its name aloud.
           </li>
           <li>
-            <strong>Check winners.</strong> Five in a row wins — enter their card number to confirm.
+            <strong>Check winners.</strong> Five in a row wins — enter their card ID to confirm.
           </li>
         </ol>
-        <section className="partner-band" aria-label="Partnership">
+        {/* Decorative: the header already names both organisations. */}
+        <div className="partner-band">
+          <img className="partner-band-most" src={mostLogo} alt="" />
           <img src={wepLogo} alt="" />
-          <p>
-            Presented in partnership with <strong>Onondaga County Water Environment Protection (WEP)</strong> — the
-            team that runs the treatment plants and pump stations you’ll see on the tiles.
-          </p>
-        </section>
+        </div>
       </main>
     </div>
   );

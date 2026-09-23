@@ -87,24 +87,19 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1rem 1.5rem;
+  gap: 1rem 2.5rem;
+  width: 100%;
   max-width: 900px;
   margin-top: 1rem;
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 1.5rem 0;
   border-top: 1px solid var(--line);
-  text-align: left;
 }
 .partner-band img {
   height: 64px;
   width: auto;
 }
-.partner-band p {
-  flex: 1 1 320px;
-  margin: 0;
-  color: var(--muted);
-}
-.partner-band strong {
-  color: var(--wep-green);
+.partner-band .partner-band-most {
+  height: 40px;
 }
 
 /* ---------- Caller ---------- */

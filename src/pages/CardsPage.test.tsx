@@ -25,7 +25,7 @@ describe("CardsPage", () => {
     expect(ids).toHaveLength(3);
     for (const id of ids) {
       expect(isCardId(id ?? "")).toBe(true);
-      expect(screen.getByText(`Card ${id}`)).toBeInTheDocument();
+      expect(screen.getByText(id ?? "")).toHaveClass("card-id");
     }
     expect(new Set(ids).size).toBe(3);
     expect(screen.getByText(/3 cards on 3 letter pages/)).toBeInTheDocument();

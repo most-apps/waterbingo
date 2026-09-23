@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { TILE_IDS, getTile } from "../data/tiles";
 import { ADJECTIVES, NOUNS, randomCardIds } from "./cardIds";
 import { cardLayout } from "./cards";
-import { FOOTER, FOOTER_SIZE, buildCardsPdf } from "./cardsPdf";
+import { FOOTER, FREE_CAPTION, MOST_LOGO_ASPECT, buildCardsPdf } from "./cardsPdf";
 import { mulberry32 } from "./random";
 import type { PerSheet } from "./sheetLayout";
 
@@ -31,18 +31,17 @@ describe("buildCardsPdf", () => {
     expect(doc.getTitle()).toBe(`Water Bingo cards (${count})`);
   });
 
-  it("fits the widest possible card ID beside the footer text", async () => {
+  it("fits the widest possible card ID beside the MOST logo, and the caption in the FREE square", async () => {
     const doc = await PDFDocument.create();
-    const [regular, bold] = await Promise.all([
-      doc.embedFont(StandardFonts.Helvetica),
-      doc.embedFont(StandardFonts.HelveticaBold),
-    ]);
+    const bold = await doc.embedFont(StandardFonts.HelveticaBold);
     const widest = (list: readonly string[]) =>
       [...list].sort((a, b) => bold.widthOfTextAtSize(b, 1) - bold.widthOfTextAtSize(a, 1));
     const [a1, a2] = widest(ADJECTIVES);
-    const id = `Card ${a1}-${a2}-${widest(NOUNS)[0]}`;
-    // Widths in u (1% of card width); 2u gap between the two, as in the CSS.
-    const used = regular.widthOfTextAtSize(FOOTER, FOOTER_SIZE.text) + 2 + bold.widthOfTextAtSize(id, FOOTER_SIZE.id);
-    expect(used).toBeLessThan(98);
+    const id = `${FOOTER.idLabel}${a1}-${a2}-${widest(NOUNS)[0]}`;
+    // Widths in u (1% of card width): ID, gap, logo — as in the CSS.
+    const used = bold.widthOfTextAtSize(id, FOOTER.idSize) + FOOTER.gap + FOOTER.logoHeight * MOST_LOGO_ASPECT;
+    expect(used).toBeLessThan(96);
+    // A grid cell is 20u with 1.2u padding each side.
+    expect(bold.widthOfTextAtSize(FREE_CAPTION.text, FREE_CAPTION.size)).toBeLessThan(17.6);
   });
 });

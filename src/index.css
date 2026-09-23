@@ -1,10 +1,11 @@
-/* WEP brand colours are sampled from the Onondaga County WEP logo. */
+/* WEP brand colours are sampled from the Onondaga County WEP logo, MOST pink from the MOST logo. */
 :root {
   --wep-blue: #0257b7;
   --wep-blue-dark: #01418a;
   --wep-blue-soft: #e3eefb;
   --wep-green: #1e722d;
   --wep-green-soft: #e1f2e4;
+  --most-pink: #df068c;
   --ink: #0e1a2b;
   --muted: #4d5b70;
   --line: #d3deec;
@@ -231,6 +232,9 @@ kbd {
 .partner img {
   height: 44px;
   width: auto;
+}
+.partner .partner-most {
+  height: 26px;
 }
 .toolbar {
   display: flex;

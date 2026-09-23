@@ -224,19 +224,31 @@
   font-size: calc(var(--u) * 3.4);
   font-weight: 800;
 }
+.bingo-cell-caption {
+  font-size: calc(var(--u) * 1.7);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* Card ID left, MOST logo right. Mirrors cardsPdf.ts. */
 .bingo-card-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: calc(var(--u) * 2);
+  gap: calc(var(--u) * 1.5);
   flex: 1;
-  font-size: calc(var(--u) * 2.1);
-  color: var(--muted);
+}
+.bingo-card-most {
+  height: calc(var(--u) * 3.6);
+  width: auto;
 }
 .bingo-card-foot strong {
   font-size: calc(var(--u) * 3);
   color: var(--ink);
   white-space: nowrap;
+}
+.bingo-card-foot .card-id {
+  color: var(--most-pink);
 }
 
 /* ---------- Paper ----------

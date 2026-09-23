@@ -21,6 +21,7 @@ describe("CallerPage", () => {
     expect(screen.getByRole("button", { name: "Start calling" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Print bingo cards" })).toHaveAttribute("href", "/cards");
     expect(screen.getByAltText(/Water Environment Protection/)).toBeInTheDocument();
+    expect(screen.getByAltText(/Museum of Science & Technology \(MOST\)/)).toBeInTheDocument();
   });
 
   it("calls tiles with buttons and keyboard, and steps back", async () => {
