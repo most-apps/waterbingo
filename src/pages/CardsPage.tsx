@@ -4,7 +4,8 @@ import BingoCard from "../components/BingoCard";
 import NumberField from "../components/NumberField";
 import SiteHeader from "../components/SiteHeader";
 import { TILE_IDS, getTile } from "../data/tiles";
-import { MAX_CARD_NUMBER, cardLayout, formatCardNumber } from "../lib/cards";
+import { EXAMPLE_CARD_ID, randomCardIds } from "../lib/cardIds";
+import { cardLayout } from "../lib/cards";
 import { PER_SHEET_OPTIONS, paginate, parsePerSheet, sheetSpec, type PerSheet } from "../lib/sheetLayout";
 import "./cards.css";
 
@@ -22,19 +23,21 @@ export default function CardsPage() {
   const [params, setParams] = useSearchParams();
   const [pdfState, setPdfState] = useState<"idle" | "busy" | "error">("idle");
 
-  const from = clampInt(params.get("from"), 1, 1, MAX_CARD_NUMBER);
-  const maxCount = Math.min(MAX_BATCH, MAX_CARD_NUMBER - from + 1);
-  const count = clampInt(params.get("count"), DEFAULT_COUNT, 1, maxCount);
+  const count = clampInt(params.get("count"), DEFAULT_COUNT, 1, MAX_BATCH);
   const per = parsePerSheet(params.get("per"));
-  const last = from + count - 1;
+
+  // Fresh random IDs on every visit (never in the URL, so a bookmark can't reprint
+  // old cards). Raising the count adds IDs and keeps the ones already shown.
+  const [ids, setIds] = useState(() => randomCardIds(count));
+  if (ids.length < count) setIds([...ids, ...randomCardIds(count - ids.length, ids)]);
 
   const cards = useMemo(
-    () => Array.from({ length: count }, (_, i) => ({ n: from + i, cells: cardLayout(from + i, TILE_IDS) })),
-    [from, count],
+    () => ids.slice(0, count).map((id) => ({ id, cells: cardLayout(id, TILE_IDS) })),
+    [ids, count],
   );
   const sheets = paginate(cards, per);
 
-  const update = (key: "from" | "count" | "per", value: number) =>
+  const update = (key: "count" | "per", value: number) =>
     setParams(
       (p) => {
         p.set(key, String(value));
@@ -51,7 +54,7 @@ export default function CardsPage() {
       const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" }));
       const a = document.createElement("a");
       a.href = url;
-      a.download = `water-bingo-cards-${formatCardNumber(from).slice(1)}-${formatCardNumber(last).slice(1)}-${per}up.pdf`;
+      a.download = `water-bingo-${plural(count, "card")}-${per}up.pdf`.replaceAll(" ", "-");
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
       setPdfState("idle");
@@ -74,14 +77,14 @@ export default function CardsPage() {
           <div>
             <h1 id="print-title">Print bingo cards</h1>
             <p>
-              Card numbers are permanent — card {formatCardNumber(12)} always has the same pictures — so print the next
-              range later to add players without duplicates.
+              Every card gets its own random ID, like <strong>{EXAMPLE_CARD_ID}</strong>, and the same ID always has
+              the same pictures. Cards left over from earlier events keep working, and new cards won’t repeat them. To
+              check a card, type its ID into the caller screen.
             </p>
           </div>
 
           <div className="print-form">
-            <NumberField label="First card #" value={from} min={1} max={MAX_CARD_NUMBER} onCommit={(n) => update("from", n)} />
-            <NumberField label="How many cards" value={count} min={1} max={maxCount} onCommit={(n) => update("count", n)} />
+            <NumberField label="How many cards" value={count} min={1} max={MAX_BATCH} onCommit={(n) => update("count", n)} />
             <fieldset className="per-sheet">
               <legend>Cards per page</legend>
               <div className="per-sheet-options">
@@ -110,7 +113,7 @@ export default function CardsPage() {
               Print
             </button>
             <p className="print-summary" aria-live="polite">
-              Cards {formatCardNumber(from)}–{formatCardNumber(last)}: {plural(count, "card")} on{" "}
+              {plural(count, "card")} on{" "}
               {plural(sheets.length, "letter page")}
               {sheetSpec(per).orientation === "landscape" ? " (landscape)" : ""}.
             </p>
@@ -122,7 +125,7 @@ export default function CardsPage() {
           )}
           <p className="print-tip">
             The PDF has no browser headers, footers or web address — best for sharing or a print shop. Print at 100% /
-            “Actual size”.
+            “Actual size”. Download PDF and Print both use the cards shown below; reloading this page makes a new set.
           </p>
         </section>
       </div>
@@ -131,9 +134,9 @@ export default function CardsPage() {
         {sheets.map((sheet, i) => (
           <div key={i} className={`sheet-frame sheet-frame--${sheetSpec(per).orientation}`}>
             <section className={`sheet sheet--${per}`} aria-label={`Page ${i + 1}`}>
-              {sheet.map(({ n, cells }) => (
-                <div key={n} className="sheet-slot">
-                  <BingoCard cardNumber={n} cells={cells} />
+              {sheet.map(({ id, cells }) => (
+                <div key={id} className="sheet-slot">
+                  <BingoCard cardId={id} cells={cells} />
                 </div>
               ))}
             </section>

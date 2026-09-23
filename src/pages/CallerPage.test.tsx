@@ -88,9 +88,14 @@ describe("CallerPage", () => {
     await user.click(screen.getByRole("button", { name: "Start calling" }));
     await user.click(screen.getByRole("button", { name: "Check a card" }));
     const dialog = screen.getByRole("dialog");
-    await user.type(within(dialog).getByLabelText(/Card number/), "7");
-    expect(within(dialog).getByRole("status")).toHaveTextContent(/No bingo yet — [01] of 24/);
-    expect(within(dialog).getByRole("article", { name: "Bingo card 7" })).toBeInTheDocument();
-    expect(cardLayout(7, TILE_IDS)).toHaveLength(25);
+    const input = within(dialog).getByLabelText(/Card ID/);
+    await user.type(input, "bubbly misty xyz");
+    expect(within(dialog).getByRole("alert")).toHaveTextContent("“xyz”");
+
+    await user.clear(input);
+    await user.type(input, "Bub Mis Ott");
+    expect(within(dialog).getByRole("status")).toHaveTextContent(/No bingo yet — [01] of 24 .* bubbly-misty-otter/);
+    expect(within(dialog).getByRole("article", { name: "Bingo card bubbly-misty-otter" })).toBeInTheDocument();
+    expect(cardLayout("bubbly-misty-otter", TILE_IDS)).toHaveLength(25);
   });
 });

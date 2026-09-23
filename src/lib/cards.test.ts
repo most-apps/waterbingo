@@ -1,36 +1,50 @@
 import { describe, expect, it } from "vitest";
+import { randomCardIds } from "./cardIds";
 import { CELLS, FREE_INDEX, cardLayout, winningLines } from "./cards";
+import { mulberry32 } from "./random";
 
 const ids = Array.from({ length: 27 }, (_, i) => `t${i}`);
 
 describe("cardLayout", () => {
-  it("is the same every time for a given card number", () => {
-    expect(cardLayout(17, ids)).toEqual(cardLayout(17, ids));
+  it("is the same every time for a given card ID", () => {
+    expect(cardLayout("bubbly-misty-otter", ids)).toEqual(cardLayout("bubbly-misty-otter", ids));
+  });
+
+  it("pins the layout of a known card", () => {
+    // Changing this changes every printed card; update it only when reprinting everything.
+    expect(cardLayout("bubbly-misty-otter", ids).slice(0, 5)).toMatchInlineSnapshot(`
+      [
+        "t20",
+        "t13",
+        "t8",
+        "t21",
+        "t10",
+      ]
+    `);
   });
 
   it("has 24 distinct tiles and a FREE centre", () => {
-    const card = cardLayout(1, ids);
+    const card = cardLayout("calm-cool-sea", ids);
     expect(card).toHaveLength(CELLS);
     expect(card[FREE_INDEX]).toBeNull();
     const tiles = card.filter((c) => c !== null);
     expect(new Set(tiles).size).toBe(CELLS - 1);
   });
 
-  it("gives different card numbers different layouts", () => {
-    const seen = new Set<string>();
-    for (let n = 1; n <= 500; n++) seen.add(cardLayout(n, ids).join(","));
-    expect(seen.size).toBe(500);
+  it("gives different card IDs different layouts", () => {
+    const cardIds = randomCardIds(500, [], mulberry32(3));
+    expect(new Set(cardIds.map((id) => cardLayout(id, ids).join(","))).size).toBe(500);
   });
 
-  it("rejects invalid card numbers", () => {
-    expect(() => cardLayout(0, ids)).toThrow(RangeError);
-    expect(() => cardLayout(1.5, ids)).toThrow(RangeError);
-    expect(() => cardLayout(10000, ids)).toThrow(RangeError);
+  it("rejects invalid card IDs", () => {
+    expect(() => cardLayout("", ids)).toThrow(RangeError);
+    expect(() => cardLayout("Bubbly Misty Otter", ids)).toThrow(RangeError);
+    expect(() => cardLayout("bubbly-misty-unicorn", ids)).toThrow(RangeError);
   });
 });
 
 describe("winningLines", () => {
-  const card = cardLayout(3, ids);
+  const card = cardLayout("frosty-gentle-heron", ids);
   const at = (...idx: number[]) => new Set(idx.map((i) => card[i]).filter((c): c is string => c !== null));
 
   it("finds nothing on an empty board", () => {

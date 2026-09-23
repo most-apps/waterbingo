@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
+import { isCardId } from "../lib/cardIds";
 import CardsPage from "./CardsPage";
 
 const buildCardsPdf = vi.fn(async () => new Uint8Array([37, 80, 68, 70]));
@@ -15,20 +16,48 @@ const renderAt = (url: string) =>
   );
 
 const pageCount = () => screen.getAllByRole("region", { name: /^Page \d+$/ }).length;
+const cardIds = () => screen.getAllByRole("article").map((c) => c.getAttribute("aria-label")?.replace("Bingo card ", ""));
 
 describe("CardsPage", () => {
-  it("renders the requested range of numbered cards", () => {
-    renderAt("/cards?from=41&count=3");
-    const cards = screen.getAllByRole("article");
-    expect(cards.map((c) => c.getAttribute("aria-label"))).toEqual(["Bingo card 41", "Bingo card 42", "Bingo card 43"]);
-    expect(screen.getByText("Card #0041")).toBeInTheDocument();
+  it("gives each card its own word ID", () => {
+    renderAt("/cards?count=3");
+    const ids = cardIds();
+    expect(ids).toHaveLength(3);
+    for (const id of ids) {
+      expect(isCardId(id ?? "")).toBe(true);
+      expect(screen.getByText(`Card ${id}`)).toBeInTheDocument();
+    }
+    expect(new Set(ids).size).toBe(3);
     expect(screen.getByText(/3 cards on 3 letter pages/)).toBeInTheDocument();
   });
 
+  it("makes a new set of cards on each visit", () => {
+    const { unmount } = renderAt("/cards?count=5");
+    const first = cardIds();
+    unmount();
+    renderAt("/cards?count=5");
+    expect(cardIds()).not.toEqual(first);
+  });
+
+  it("keeps the cards already shown when the count or layout changes", async () => {
+    const user = userEvent.setup();
+    renderAt("/cards?count=2");
+    const before = cardIds();
+
+    const field = screen.getByLabelText("How many cards");
+    await user.clear(field);
+    await user.type(field, "4");
+    await user.tab();
+    expect(cardIds()).toHaveLength(4);
+    expect(cardIds().slice(0, 2)).toEqual(before);
+
+    await user.click(screen.getByRole("radio", { name: "4" }));
+    expect(cardIds().slice(0, 2)).toEqual(before);
+  });
+
   it("clamps silly URL values", () => {
-    renderAt("/cards?from=-5&count=99999&per=7");
+    renderAt("/cards?count=99999&per=7");
     expect(screen.getAllByRole("article")).toHaveLength(200);
-    expect(screen.getByText("Card #0001")).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "1" })).toBeChecked();
   });
 
@@ -56,13 +85,16 @@ describe("CardsPage", () => {
     URL.revokeObjectURL = vi.fn();
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
 
-    renderAt("/cards?from=7&count=4&per=4");
+    renderAt("/cards?count=4&per=4");
+    const shown = cardIds();
     await user.click(screen.getByRole("button", { name: "Download PDF" }));
 
     await waitFor(() => expect(click).toHaveBeenCalled());
     expect(buildCardsPdf).toHaveBeenCalledWith(expect.objectContaining({ perSheet: 4 }));
+    const [[{ cards }]] = buildCardsPdf.mock.calls as unknown as [[{ cards: { id: string }[] }]];
+    expect(cards.map((c) => c.id)).toEqual(shown);
     const anchor = click.mock.contexts[0] as HTMLAnchorElement;
-    expect(anchor.download).toBe("water-bingo-cards-0007-0010-4up.pdf");
+    expect(anchor.download).toBe("water-bingo-4-cards-4up.pdf");
     expect(screen.getByRole("button", { name: "Download PDF" })).toBeEnabled();
   });
 });

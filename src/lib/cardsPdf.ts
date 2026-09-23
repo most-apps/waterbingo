@@ -1,5 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFImage, type PDFPage } from "pdf-lib";
-import { FREE_INDEX, GRID, formatCardNumber, type CardCell } from "./cards";
+import { FREE_INDEX, GRID, type CardCell } from "./cards";
 import { cardRect, paginate, sheetSpec, slotRects, wrapText, type PerSheet, type Rect } from "./sheetLayout";
 
 /**
@@ -13,8 +13,13 @@ export interface PdfTile {
   image: string;
 }
 
+export interface PdfCard {
+  id: string;
+  cells: readonly CardCell[];
+}
+
 export interface BuildOptions {
-  cards: readonly { n: number; cells: readonly CardCell[] }[];
+  cards: readonly PdfCard[];
   perSheet: PerSheet;
   getTile: (id: string) => PdfTile;
   loadImage?: (url: string) => Promise<ArrayBuffer | Uint8Array>;
@@ -34,15 +39,15 @@ const CUT_LINE = hex("#b8c4d4");
 
 const DROP_PATH = "M32 4C32 4 12 28 12 42a20 20 0 0 0 40 0C52 28 32 4 32 4z";
 const SUBTITLE = "ONONDAGA COUNTY DEPARTMENT OF WATER ENVIRONMENT PROTECTION";
-const FOOTER = "Mark each picture when it's called. Five in a row wins!";
+export const FOOTER = "Mark each picture when it's called. Five in a row wins!";
+/** Footer font sizes in `u`; the instructions and the card ID share one line. */
+export const FOOTER_SIZE = { text: 2.1, id: 3 };
 
 const defaultLoad = async (url: string) => (await fetch(url)).arrayBuffer();
 
 export async function buildCardsPdf({ cards, perSheet, getTile, loadImage = defaultLoad }: BuildOptions) {
   const doc = await PDFDocument.create();
-  const first = cards[0]?.n ?? 1;
-  const last = cards[cards.length - 1]?.n ?? first;
-  doc.setTitle(`Water Bingo cards ${formatCardNumber(first)}–${formatCardNumber(last)}`);
+  doc.setTitle(`Water Bingo cards (${cards.length})`);
   doc.setSubject("In partnership with Onondaga County Department of Water Environment Protection");
   doc.setCreator("Water Bingo");
 
@@ -86,7 +91,7 @@ function drawCutLines(page: PDFPage, per: PerSheet) {
 }
 
 /** Everything is laid out in `u` = 1% of card width, top-down, then flipped to PDF coordinates. */
-function drawCard(page: PDFPage, box: Rect, card: { n: number; cells: readonly CardCell[] }, ctx: DrawContext) {
+function drawCard(page: PDFPage, box: Rect, card: PdfCard, ctx: DrawContext) {
   const pageH = page.getSize().height;
   const u = box.w / 100;
   const X = (x: number) => box.x + x * u;
@@ -124,9 +129,9 @@ function drawCard(page: PDFPage, box: Rect, card: { n: number; cells: readonly C
   page.drawRectangle({ x: X(0), y: Y(top + 100), width: 100 * u, height: 100 * u, borderColor: BLUE, borderWidth: 0.7 * u });
 
   // Footer.
-  page.drawText(FOOTER, { x: X(0), y: Y(118.4), size: 2.1 * u, font: regular, color: MUTED });
-  const num = `Card ${formatCardNumber(card.n)}`;
-  const numSize = 3 * u;
+  page.drawText(FOOTER, { x: X(0), y: Y(118.4), size: FOOTER_SIZE.text * u, font: regular, color: MUTED });
+  const num = `Card ${card.id}`;
+  const numSize = FOOTER_SIZE.id * u;
   page.drawText(num, { x: X(100) - bold.widthOfTextAtSize(num, numSize), y: Y(118.6), size: numSize, font: bold, color: INK });
 }
 

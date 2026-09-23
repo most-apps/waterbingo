@@ -19,3 +19,13 @@ export function shuffle<T>(items: readonly T[], random: () => number = Math.rand
   }
   return out;
 }
+
+/** FNV-1a: a stable 32-bit hash of a string, for use as a PRNG seed. */
+export function hashString(text: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}

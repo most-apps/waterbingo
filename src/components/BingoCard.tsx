@@ -1,9 +1,9 @@
-import { FREE_INDEX, formatCardNumber, isMarked, type CardCell } from "../lib/cards";
+import { FREE_INDEX, isMarked, type CardCell } from "../lib/cards";
 import { getTile } from "../data/tiles";
 import WaterDrop from "./WaterDrop";
 
 interface Props {
-  cardNumber: number;
+  cardId: string;
   cells: readonly CardCell[];
   /** When given, called cells are marked (used by the card checker). */
   called?: ReadonlySet<string>;
@@ -11,9 +11,9 @@ interface Props {
   variant?: "print" | "compact";
 }
 
-export default function BingoCard({ cardNumber, cells, called, winning, variant = "print" }: Props) {
+export default function BingoCard({ cardId, cells, called, winning, variant = "print" }: Props) {
   return (
-    <article className={`bingo-card bingo-card--${variant}`} aria-label={`Bingo card ${cardNumber}`}>
+    <article className={`bingo-card bingo-card--${variant}`} aria-label={`Bingo card ${cardId}`}>
       {variant === "print" && (
         <header className="bingo-card-head">
           <h2>
@@ -53,7 +53,7 @@ export default function BingoCard({ cardNumber, cells, called, winning, variant 
       {variant === "print" && (
         <footer className="bingo-card-foot">
           <span>Mark each picture when it’s called. Five in a row wins!</span>
-          <strong>Card {formatCardNumber(cardNumber)}</strong>
+          <strong>Card {cardId}</strong>
         </footer>
       )}
     </article>
